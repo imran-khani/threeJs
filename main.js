@@ -52,27 +52,34 @@ scene.add(sphere);
 const gui = new dat.GUI();
 const options = {
   sphereColor: "#ffea00",
-  wireframe:false
+  wireframe: false,
+  speed: 0.01,
 };
 
-gui.add(options,'wireframe').onChange((e)=>{
-  sphere.material.wireframe = e;
-})
-
+// GUI
 gui.addColor(options, "sphereColor").onChange((e) => {
   sphere.material.color.set(e);
 });
 
-let step =0
-let speed = 0.01;
+gui.add(options, "wireframe").onChange((e) => {
+  sphere.material.wireframe = e;
+});
 
+gui.add(options, "speed", 0, 0.1);
+
+let step = 0;
+let speed = 0.01;
 
 const animate = () => {
   box.rotation.x += 0.01;
   box.rotation.y += 0.01;
+  step += options.speed;
+  sphere.position.y = 10 * Math.abs(Math.sin(step));
   renderer.render(scene, camera);
 };
 
 renderer.setAnimationLoop(animate);
 
 renderer.render(scene, camera);
+
+
