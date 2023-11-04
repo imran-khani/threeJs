@@ -1,81 +1,44 @@
 import "./style.css";
 
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as dat from "dat.gui";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-const scene = new THREE.Scene();
+// scence
+const scence = new THREE.Scene();
+
+//camera
 const camera = new THREE.PerspectiveCamera(
-  45,
+  75,
   window.innerWidth / window.innerHeight,
-  0.01,
+  0.1,
   1000
 );
-camera.position.set(-10, 30, 30);
+camera.position.set(0, 10, 20);
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
+// Renderer
+const Renderer = new THREE.WebGLRenderer();
+Renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(Renderer.domElement);
 
-document.body.appendChild(renderer.domElement);
-
-const orbit = new OrbitControls(camera, renderer.domElement);
+// orbit controls
+const orbit = new OrbitControls(camera, Renderer.domElement);
 orbit.update();
 
+// Materials
+const boxMaterial = new THREE.MeshPhongMaterial({ color: 0xffff });
+const planeMaterial = new THREE.MeshPhongMaterial({ color: 0xffff });
+const sphereMaterial = new THREE.MeshPhongMaterial({ color: 0xffff });
+
+// Geometries
 const boxGeometry = new THREE.BoxGeometry();
-const boxMaterial = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-});
-const box = new THREE.Mesh(boxGeometry, boxMaterial);
-scene.add(box);
+const spereGeometry = new THREE.SphereGeometry(4, 32, 32);
+const planeGeometry = new THREE.PlaneGeometry(20, 20);
 
-const planeGeometry = new THREE.PlaneGeometry(30, 30);
-const planeMaterial = new THREE.MeshBasicMaterial({
-  color: 0xffffff,
-  side: THREE.DoubleSide,
-});
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-scene.add(plane);
-plane.rotation.x = -0.5 * Math.PI;
+// Meshes
+const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
+const sphereMesh = new THREE.Mesh(spereGeometry, sphereMaterial);
 
-const GridHelper = new THREE.GridHelper(30);
-scene.add(GridHelper);
-
-const sphereGeometry = new THREE.SphereGeometry(4, 50, 50);
-const sphereMaterial = new THREE.MeshBasicMaterial({
-  color: 0x00ff,
-  wireframe: false,
-});
-const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-sphere.position.set(-10, 10, 10);
-scene.add(sphere);
-
-const gui = new dat.GUI();
-const options = {
-  sphereColor: "#ffea00",
-  wireframe: false,
-  speed: 0.01,
-};
-
-gui.addColor(options,'sphereColor').onChange((e)=>{
-  sphere.material.color.set(e)
-})
-
-gui.add(options,'wireframe').onChange((e)=>{
-  sphere.material.wireframe = e
-})
-
-gui.add(options,'speed',0,0.1)
-
-
-let step = 0;
-
-const animate = () => {
-  box.rotation.x += 0.01;
-  box.rotation.y += 0.01;
-  step += options.speed;
-  sphere.position.y = 10 * Math.abs(Math.sin(step));
-  renderer.render(scene, camera);
-};
-
-renderer.setAnimationLoop(animate);
-renderer.render(scene, camera);
+// add meshes to the scene
+scence.add(boxMesh, planeMesh, sphereMesh);
